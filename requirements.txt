@@ -1,0 +1,4 @@
+ollama
+langchain_ollama
+langchain_chroma
+PyPDF2
