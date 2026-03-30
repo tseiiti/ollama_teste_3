@@ -6,7 +6,6 @@ import PyPDF2
 import pandas as pd
 
 def load_csv(path):
-  # global vector_store
   documents = []
   df = pd.read_csv(path)
   for row in df.itertuples():
@@ -14,7 +13,6 @@ def load_csv(path):
   vector_store.add_documents(documents=documents)
 
 def load_pdf(path):
-  # global vector_store
   documents = []
   with open(path, "rb") as f:
     pdf = PyPDF2.PdfReader(f)
