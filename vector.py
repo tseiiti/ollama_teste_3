@@ -1,42 +1,81 @@
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 import os
 import PyPDF2
 import pandas as pd
 
-def load_csv(path):
-  documents = []
-  df = pd.read_csv(path)
-  for row in df.itertuples():
-    documents.append(Document(page_content=row.content))
-  vector_store.add_documents(documents=documents)
+def load_and_split(docs):
+  splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200,
+  )
+  vector_store.add_documents(documents=splitter.split_documents(docs))
 
 def load_pdf(path):
-  documents = []
+  docs = []
   with open(path, "rb") as f:
     pdf = PyPDF2.PdfReader(f)
-    for p in pdf.pages:
-      text = p.extract_text()
-      if text.strip():
-        documents.append(Document(page_content=text))
-  vector_store.add_documents(documents=documents)
+    for i, p in enumerate(pdf.pages):
+      content = p.extract_text()
+      docs.append(Document(
+        page_content=content,
+        metadata={
+          "source": path,
+          "page": i + 1,
+          "file_type": "pdf",
+        }))
+  load_and_split(docs)
+
+def load_csv(path):
+  docs = []
+  df = pd.read_csv(path)
+  for i, row in df.iterrows():
+    docs.append(Document(
+      page_content=row.content,
+      metadata={
+        "source": path,
+        "page": i + 1,
+        "file_type": "csv",
+      }))
+  load_and_split(docs)
+
+def load_txt(path):
+  docs = []
+  with open(path, "r", encoding="utf-8") as f:
+    content = f.read()
+  docs.append(Document(
+    page_content=content,
+    metadata={
+      "source": path,
+      "page": 1,
+      "file_type": "txt",
+    }))
+  load_and_split(docs)
+
 
 
 embeddings = OllamaEmbeddings(model="qwen3-embedding:0.6b")
-db_location = "./db"
-add_documents = not os.path.exists(db_location)
+directory = "./db"
+is_add = not os.path.exists(directory)
 
 vector_store = Chroma(
   embedding_function=embeddings,
-  persist_directory=db_location,
+  persist_directory=directory,
 )
 
-if add_documents:
-  documents = []
-  load_csv("../docs/c.csv")
-  load_pdf("../docs/a.pdf")
-  load_pdf("../docs/b.pdf")
+if is_add:
+  docs_path = "../docs"
+  loaders = {
+    ".pdf": load_pdf,
+    ".csv": load_csv,
+    ".txt": load_txt,
+  }
+  for fn in os.listdir(docs_path):
+    path = os.path.join(docs_path, fn)
+    loader = loaders.get(os.path.splitext(path)[1])
+    loader(path)
 
 retriever = vector_store.as_retriever(
   search_kwargs={"k": 5}

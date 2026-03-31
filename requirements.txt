@@ -3,3 +3,6 @@ langchain_ollama
 langchain_chroma
 PyPDF2
 langserve[all]
+langchain-community
+# unstructured[all-docs]
+langchain-unstructured
