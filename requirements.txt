@@ -7,3 +7,4 @@ langserve[all]
 langchain_community
 # unstructured[all-docs]
 langchain_unstructured
+pandas

@@ -7,11 +7,11 @@ import PyPDF2
 import os
 
 from config import (
-  EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP, 
+  EMBEDDING_MODEL, OLLAMA_BASE_URL, CHUNK_SIZE, CHUNK_OVERLAP, 
   CHROMA_DB_PATH, STORAGE_PATH, TOP_K
 )
 
-def load_and_split(docs):
+def load_and_split(docs):  
   splitter = RecursiveCharacterTextSplitter(
     chunk_size=CHUNK_SIZE,
     chunk_overlap=CHUNK_OVERLAP,
@@ -61,7 +61,7 @@ def load_txt(path):
 
 
 
-embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
+embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=OLLAMA_BASE_URL)
 is_add = not os.path.isfile(os.path.join(CHROMA_DB_PATH, "chroma.sqlite3"))
 
 vector_store = Chroma(
