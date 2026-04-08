@@ -46,6 +46,11 @@ def query_rag(request: QueryRequest):
   # return {"response": response.message.content}
   return response
 
+@app.post("/context")
+def get_context(request: QueryRequest):
+  context = [ doc.page_content for doc in retriever.invoke(request.query) ]
+  return context
+
 
 if __name__ == "__main__":
   import uvicorn
