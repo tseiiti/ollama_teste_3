@@ -158,42 +158,35 @@ const ia_thinking_state = () => {
   });
 }
 
-const set_user_messages = () => {
-  let tap = qs('[name=textarea_prompt]');
-  let context = '';
-  fetch(CONTEXT_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: tap.value
-    })
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+const call_chat_api = async () => {
+  try {
+    const response = await fetch(CHAT_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: CURRENT_MODEL,
+        messages: MESSAGES,
+      })
+    });
+    
+    const reader = response.body?.getReader();
+    if (!reader) return;
+
+    qs('.flex.flex-col.items-start.group.invisible').classList.remove('invisible');
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      get_content(value);
     }
-    return response.json();
-  })
-  .then(json => {context = json; console.log('Success:', json)})
-  .catch(error => console.error('Error:', error)); 
-
-  let content = `
-    Pergunta: ${tap.value}
-
-    Contexto: ${context}
-  `;
-
-  MESSAGES.push({ role: 'user', content: content });
-  IA_MSG_ID = MESSAGES.length;
-
-  insert_user_message(tap.value);
-  insert_ia_message(IA_MSG_ID);
-  ia_thinking_state();
-
-  tap.value = '';
-  tap.readOnly = true;
+  } catch (error) {
+    console.log('call_chat_api error:', error);
+  } finally {
+    let msg = MESSAGES.findLast(msg => msg.role == 'user');
+    msg.content = PROMPT;
+    set_assitent_messages();
+  }
 }
 
 const get_content = value => {
@@ -201,16 +194,16 @@ const get_content = value => {
     let rjson = new TextDecoder().decode(value);
     let json = JSON.parse(rjson);
     if (json.done) {
-      EVAL_PROMPT_COUNT += json.prompt_eval_count;
-      EVAL_PROMPT_COUNT += json.eval_count;
+      TOKENS += json.prompt_eval_count;
+      TOKENS += json.eval_count;
 
-      qs('.token').innerHTML = `${EVAL_PROMPT_COUNT} TOKENS REMAINING`;
+      qs('.token').innerHTML = `${TOKENS} TOKENS REMAINING`;
     } else {
       let content = json.message.content;
       qs(`#ia_msg_${IA_MSG_ID}`).innerHTML += content;
     }
   } catch (error) {
-    console.log(error);
+    console.log('get_content error:', error);
   }
 }
 
@@ -223,57 +216,67 @@ const set_assitent_messages = () => {
   qs('[name=textarea_prompt]').focus();
 }
 
-// executa api do ollama, depende da mensagem do usuário, tratamento do conteúdo e gera o retorno do assistente
-async function call_chat_api() {
-  set_user_messages();
-
-  try {
-    const response = await fetch(CHAT_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: CURRENT_MODEL,
-        messages: MESSAGES,
-      })
-    });
-
-    const reader = response.body?.getReader();
-    if (!reader) return;
-
-    qs('.flex.flex-col.items-start.group.invisible').classList.remove('invisible');
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      get_content(value);
+const send_query = async () => {
+  let e = qs('[name=textarea_prompt]');
+  if (e.value.length == 0) return;
+  PROMPT = e.value;
+  e.readOnly = true;
+  e.value = '';
+  
+  await fetch(CONTEXT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: PROMPT
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  } catch (error) {
-    console.log('Erro:', error);
-  }
+    return response.json();
+  })
+  .then(context => {
+    let content = `
+      Pergunta: ${PROMPT}
+      
+      Contexto: ${context}
+    `;
 
-  set_assitent_messages();
+    MESSAGES.push({ role: 'user', content: content });
+    IA_MSG_ID = MESSAGES.length;
+
+    insert_user_message(PROMPT);
+    insert_ia_message(IA_MSG_ID);
+    ia_thinking_state();
+    call_chat_api();
+  })
+  .catch(error => console.log('send_query error:', error));
 }
 
 const CHAT_API_URL = 'http://localhost:11434/api/chat';
-const CONTEXT_URL = 'http://localhost:8000/context';
-var IA_MSG_ID;
+const CONTEXT_URL  = 'http://localhost:8000/context';
+const MODELS_URL   = 'http://localhost:11434/api/tags';
 var MODELS = [];
-var CURRENT_MODEL = 'gemma3:1b';
 var MESSAGES = [{
   role: 'system',
   content: 'Responda a pergunta com base somente no contexto. E você é um especialista no assunto informado nesse contexto. A resposta deve ser sempre em português de forma clara e objetiva. A resposta deve ser em um único parágrafo bem elaborado e completo, a menos que esteja explícito outro formato na pergunta.'
 }];
-var EVAL_PROMPT_COUNT = 0;
+var IA_MSG_ID;
+var PROMPT;
+var TOKENS = 0;
+var CURRENT_MODEL = 'gemma3:1b';
 
 document.addEventListener('DOMContentLoaded', () => {
   qs('#form_chat_api').addEventListener('submit', function(e) {
     e.preventDefault();
-    call_chat_api();
+    send_query();
     return;
   });
 
-  fetch('http://localhost:11434/api/tags')
+  fetch(MODELS_URL)
   .then(response => { return response.json(); })
   .then(json => { 
     MODELS = json.models.sort(
@@ -282,5 +285,4 @@ document.addEventListener('DOMContentLoaded', () => {
     select_model(CURRENT_MODEL || MODELS[0].name);
   })
   .catch(error => { console.error(error); });
-
 });
