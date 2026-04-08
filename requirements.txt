@@ -4,6 +4,6 @@ langchain_chroma
 langchain_text_splitters
 PyPDF2
 langserve[all]
-langchain-community
+langchain_community
 # unstructured[all-docs]
-langchain-unstructured
+langchain_unstructured
