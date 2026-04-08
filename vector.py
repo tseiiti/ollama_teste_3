@@ -8,8 +8,8 @@ import pandas as pd
 
 def load_and_split(docs):
   splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=200,
+    chunk_size=2100,
+    chunk_overlap=300,
   )
   vector_store.add_documents(documents=splitter.split_documents(docs))
 
