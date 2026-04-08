@@ -160,11 +160,35 @@ const ia_thinking_state = () => {
 
 const set_user_messages = () => {
   let tap = qs('[name=textarea_prompt]');
-  let prompt = tap.value;
-  MESSAGES.push({ role: 'user', content: prompt });
+  let context = '';
+  fetch(CONTEXT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: tap.value
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(json => {context = json; console.log('Success:', json)})
+  .catch(error => console.error('Error:', error)); 
+
+  let content = `
+    Pergunta: ${tap.value}
+
+    Contexto: ${context}
+  `;
+
+  MESSAGES.push({ role: 'user', content: content });
   IA_MSG_ID = MESSAGES.length;
 
-  insert_user_message(prompt);
+  insert_user_message(tap.value);
   insert_ia_message(IA_MSG_ID);
   ia_thinking_state();
 
@@ -172,18 +196,8 @@ const set_user_messages = () => {
   tap.readOnly = true;
 }
 
-const set_assitent_messages = () => {
-  let content = qs(`#ia_msg_${IA_MSG_ID}`).innerHTML;
-  MESSAGES.push({ role: 'system', content: content });
-
-  qs('.ia_thinking_state').remove();
-  qs('[name=textarea_prompt]').readOnly = false;
-  qs('[name=textarea_prompt]').focus();
-}
-
 const get_content = value => {
   try {
-    
     let rjson = new TextDecoder().decode(value);
     let json = JSON.parse(rjson);
     if (json.done) {
@@ -200,12 +214,21 @@ const get_content = value => {
   }
 }
 
-// executa api do ollama, depende da mensagem do usuário e gera o retorno do assistente
+const set_assitent_messages = () => {
+  let content = qs(`#ia_msg_${IA_MSG_ID}`).innerHTML;
+  MESSAGES.push({ role: 'assistant', content: content });
+
+  qs('.ia_thinking_state').remove();
+  qs('[name=textarea_prompt]').readOnly = false;
+  qs('[name=textarea_prompt]').focus();
+}
+
+// executa api do ollama, depende da mensagem do usuário, tratamento do conteúdo e gera o retorno do assistente
 async function call_chat_api() {
   set_user_messages();
 
   try {
-    const response = await fetch('http://localhost:11434/api/chat', {
+    const response = await fetch(CHAT_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -232,10 +255,15 @@ async function call_chat_api() {
   set_assitent_messages();
 }
 
+const CHAT_API_URL = 'http://localhost:11434/api/chat';
+const CONTEXT_URL = 'http://localhost:8000/context';
 var IA_MSG_ID;
 var MODELS = [];
-var CURRENT_MODEL;
-var MESSAGES = [];
+var CURRENT_MODEL = 'gemma3:1b';
+var MESSAGES = [{
+  role: 'system',
+  content: 'Responda a pergunta com base somente no contexto. E você é um especialista no assunto informado nesse contexto. A resposta deve ser sempre em português de forma clara e objetiva. A resposta deve ser em um único parágrafo bem elaborado e completo, a menos que esteja explícito outro formato na pergunta.'
+}];
 var EVAL_PROMPT_COUNT = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -251,8 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
     MODELS = json.models.sort(
       (a, b) => a.name.localeCompare(b.name)
     );
-    CURRENT_MODEL = MODELS[0].name;
-    select_model(CURRENT_MODEL);
+    select_model(CURRENT_MODEL || MODELS[0].name);
   })
   .catch(error => { console.error(error); });
 
