@@ -6,10 +6,15 @@ import pandas as pd
 import PyPDF2
 import os
 
+from config import (
+  EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP, 
+  CHROMA_DB_PATH, STORAGE_PATH, TOP_K
+)
+
 def load_and_split(docs):
   splitter = RecursiveCharacterTextSplitter(
-    chunk_size=2100,
-    chunk_overlap=300,
+    chunk_size=CHUNK_SIZE,
+    chunk_overlap=CHUNK_OVERLAP,
   )
   vector_store.add_documents(documents=splitter.split_documents(docs))
 
@@ -56,27 +61,26 @@ def load_txt(path):
 
 
 
-embeddings = OllamaEmbeddings(model="qwen3-embedding:0.6b")
-directory = "./db"
-is_add = not os.path.exists(directory)
+embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
+is_add = not os.path.isfile(os.path.join(CHROMA_DB_PATH, "chroma.sqlite3"))
 
 vector_store = Chroma(
+  collection_name="documents",
   embedding_function=embeddings,
-  persist_directory=directory,
+  persist_directory=CHROMA_DB_PATH,
 )
 
 if is_add:
-  docs_path = "../docs"
   loaders = {
     ".pdf": load_pdf,
     ".csv": load_csv,
     ".txt": load_txt,
   }
-  for fn in os.listdir(docs_path):
-    path = os.path.join(docs_path, fn)
+  for fn in os.listdir(STORAGE_PATH):
+    path = os.path.join(STORAGE_PATH, fn)
     loader = loaders.get(os.path.splitext(path)[1])
     loader(path)
 
 retriever = vector_store.as_retriever(
-  search_kwargs={"k": 5}
+  search_kwargs={"k": TOP_K}
 )

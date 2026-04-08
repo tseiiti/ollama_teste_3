@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from vector import retriever
 
+from config import (API_HOST, API_PORT)
+
 app = FastAPI()
 
 class QueryRequest(BaseModel):
@@ -14,4 +16,5 @@ def get_context(request: QueryRequest):
 
 if __name__ == "__main__":
   import uvicorn
-  uvicorn.run(app, host="localhost", port=8000)
+  print(f"Starting API server on {API_HOST}:{API_PORT}")
+  uvicorn.run(app, host=API_HOST, port=API_PORT)
