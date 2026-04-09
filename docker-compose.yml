@@ -1,6 +1,7 @@
 services:
   ollama:
-    image: ollama/ollama:rocm
+    # image: ollama/ollama:rocm
+    image: ollama/ollama
     volumes:
       - ollama:/root/.ollama
     ports:
