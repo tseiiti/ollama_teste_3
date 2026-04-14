@@ -30,7 +30,7 @@ const MessageForm = ({ onClose }) => {
           <textarea
             value={formData.value}
             name="textarea_prompt"
-            className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-3 px-2 mb-1 resize-none max-h-48 custom-scrollbar placeholder:text-outline text-on-surface font-medium"
+            className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 text-sm py-3 px-2 mb-1 resize-none max-h-48 custom-scrollbar placeholder:text-outline text-on-surface font-medium"
             placeholder="Escreva a questão a ser enviada para o modelo de IA" rows="1"
             onKeyDown={handleEnter}
             onChange={(e) => setFormData({ ...formData, value: e.target.value })}></textarea>
@@ -38,7 +38,7 @@ const MessageForm = ({ onClose }) => {
             <button
               type="submit"
               className="ml-2 w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20 hover:bg-primary-dim hover:scale-105 active:scale-95 transition-all">
-              <SendHorizontal className="text-blue-600" size={32} strokeWidth={3} />
+              <SendHorizontal />
             </button>
           </div>
         </div>
