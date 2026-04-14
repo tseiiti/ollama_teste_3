@@ -158,7 +158,14 @@ const ia_thinking_state = () => {
   });
 }
 
-const call_chat_api = async () => {
+const call_chat_api = async (content) => {
+  MESSAGES.push({ role: 'user', content: content });
+  IA_MSG_ID = MESSAGES.length;
+
+  insert_user_message(PROMPT);
+  insert_ia_message(IA_MSG_ID);
+  ia_thinking_state();
+
   try {
     const response = await fetch(CHAT_API_URL, {
       method: 'POST',
@@ -223,6 +230,14 @@ const send_query = async () => {
   e.readOnly = true;
   e.value = '';
   
+  if (!CONTEXT_URL) {
+    let content = `
+      Pergunta: ${PROMPT}
+    `;
+    call_chat_api(content);
+    return;
+  }
+
   await fetch(CONTEXT_URL, {
     method: 'POST',
     headers: {
@@ -244,20 +259,13 @@ const send_query = async () => {
       
       Contexto: ${context}
     `;
-
-    MESSAGES.push({ role: 'user', content: content });
-    IA_MSG_ID = MESSAGES.length;
-
-    insert_user_message(PROMPT);
-    insert_ia_message(IA_MSG_ID);
-    ia_thinking_state();
-    call_chat_api();
+    call_chat_api(content);
   })
   .catch(error => console.log('send_query error:', error));
 }
 
 const CHAT_API_URL = 'http://localhost:11434/api/chat';
-const CONTEXT_URL  = 'http://localhost:8000/context';
+const CONTEXT_URL  = ''; //'http://localhost:8000/context';
 const MODELS_URL   = 'http://localhost:11434/api/tags';
 var MODELS = [];
 var MESSAGES = [{

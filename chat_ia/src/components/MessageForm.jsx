@@ -5,13 +5,76 @@ import {
   SendHorizontal,
 } from 'lucide-react';
 
+const CHAT_API_URL = 'http://localhost:11434/api/chat';
+
+const get_content = value => {
+  try {
+    let rjson = new TextDecoder().decode(value);
+    let json = JSON.parse(rjson);
+    // if (json.done) {
+    //   TOKENS += json.prompt_eval_count;
+    //   TOKENS += json.eval_count;
+
+    //   qs('.token').innerHTML = `${TOKENS} TOKENS REMAINING`;
+    // } else {
+      let content = json.message.content;
+      qs(`#ia_msg_${IA_MSG_ID}`).innerHTML += content;
+    // }
+  } catch (error) {
+    console.log('get_content error:', error);
+  }
+}
+
+const call_chat_api = async () => {
+  try {
+    const response = await fetch(CHAT_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: storage.getCurrentModel(),
+        messages: storage.getMessages(),
+      })
+    });
+    
+    const reader = response.body?.getReader();
+    if (!reader) return;
+
+    // qs('.flex.flex-col.items-start.group.invisible').classList.remove('invisible');
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      get_content(value);
+    }
+  } catch (error) {
+    console.log('call_chat_api error:', error);
+  // } finally {
+  //   let msg = MESSAGES.findLast(msg => msg.role == 'user');
+  //   msg.content = PROMPT;
+  //   set_assitent_messages();
+  }
+}
+
 const MessageForm = ({ onClose }) => {
-  const [formData, setFormData] = useState({ value: '', role: 'user' });
+  const [formData, setFormData] = useState({ content: '', role: 'user' });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     storage.addMessage(formData);
-    setFormData({ value: '', role: 'user' });
+    storage.addMessage({
+      content: '',
+      role: 'assistant'
+    });
+    // storage.addMessage({
+    //   role: 'thinking'
+    // });
+
+
+    console.log(formData.content)
+
+
+    setFormData({ content: '', role: 'user' });
     onClose();
   };
 
@@ -28,12 +91,12 @@ const MessageForm = ({ onClose }) => {
       <form id="form_chat_api" onSubmit={handleSubmit}>
         <div className="flex items-end gap-2 px-2 py-1">
           <textarea
-            value={formData.value}
+            value={formData.content}
             name="textarea_prompt"
             className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 text-sm py-3 px-2 mb-1 resize-none max-h-48 custom-scrollbar placeholder:text-outline text-on-surface font-medium"
             placeholder="Escreva a questão a ser enviada para o modelo de IA" rows="1"
             onKeyDown={handleEnter}
-            onChange={(e) => setFormData({ ...formData, value: e.target.value })}></textarea>
+            onChange={(e) => setFormData({ ...formData, content: e.target.value })}></textarea>
           <div className="flex items-center gap-1 mb-1">
             <button
               type="submit"

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { storage } from '../services/storage';
 import MessageForm from './MessageForm';
+import MessageShow from './MessageShow';
 
 import {
   Trash2,
 } from 'lucide-react';
-
 
 const MessageList = ({}) => {
   const [messages, setMessages] = useState([]);
@@ -36,28 +36,8 @@ const MessageList = ({}) => {
   return (
     <main className="ml-0 mt-16 h-[calc(100vh-64px)] relative flex flex-col glow-accent">
       {/* Message Stream Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar px-8 lg:px-24 py-12 space-y-10 messages">
-        { messages.map((message) => (
-          <div key={message.id} className="flex flex-col items-end group">
-            <div className="max-w-[80%] flex items-start gap-4 flex-row-reverse">
-              <div
-                className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
-                <span className="material-symbols-outlined text-primary text-xs"
-                  style={{ fontVariationSettings: 'FILL' }}>person</span>
-              </div>
-              <div className="relative">
-                <div className="border-l-4 border-primary pl-4 py-1">
-                  <p className="text-on-surface leading-relaxed text-sm font-medium">{ message.value }</p>
-                </div>
-                <span className="text-[10px] text-on-surface-variant mt-2 block opacity-0 group-hover:opacity-100 transition-opacity font-bold">
-                  {(new Date()).toLocaleTimeString()}
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
+      <MessageShow messages={messages} />
+ 
       {/* Input Shell Area */}
       <div className="px-2 lg:px-24 pb-8 pt-4 bg-gradient-to-t from-background via-background to-transparent">
         <div className="max-w-4xl mx-auto">
@@ -75,8 +55,7 @@ const MessageList = ({}) => {
               <span className="material-symbols-outlined text-[14px] text-primary">history_edu</span>
               <span className="token">0 TOKENS REMAINING</span>
             </p>
-            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 p-4 bg-white shadow-lg rounded-lg w-100 z-10 border border-gray-200 model_tooltip">
-            </span>
+            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 p-4 bg-white shadow-lg rounded-lg w-100 z-10 border border-gray-200 model_tooltip"></span>
             <Trash2 size={32} onClick={clearMessages} />
           </div>
         </div>
