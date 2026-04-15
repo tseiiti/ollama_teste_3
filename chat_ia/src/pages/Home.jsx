@@ -33,7 +33,10 @@ const Home = () => {
 
       <div className="px-2 lg:px-24 pb-8 pt-4 bg-gradient-to-t from-background via-background to-transparent">
         <div className="max-w-4xl mx-auto">
-          <MessageForm fetchMessages={fetchMessages} setMessage={setMessage} setIsThinking={setIsThinking} />
+          <MessageForm 
+            fetchMessages={fetchMessages}
+            setMessage={setMessage}
+            setIsThinking={setIsThinking} />
 
           <div className="mt-3 group relative flex justify-center gap-6">
             <p className="text-[10px] text-on-surface-variant/80 flex items-center gap-1.5 font-bold">

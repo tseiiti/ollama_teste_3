@@ -18,7 +18,7 @@ const set = (key, value) => {
 
 export const storageMessages = {
   get: () => get(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]),
-  toSimple: () => storageMessages.get().map((e) => { return { role: e.role, content: e.content }}),
+  toSimple: () => storageMessages.get().map((e) => {return {role: e.role, content: e.content}}),
   add: (msg) => {
     const messages = storageMessages.get();
     const message = {
@@ -30,14 +30,25 @@ export const storageMessages = {
     set(KEYS.MESSAGES, messages);
     return message.id;
   },
-  upd: (id, message) => {
+  upd: (message) => {
     const messages = storageMessages.get();
-    const index = storageMessages.findIndex(c => c.id === id);
+    const index = storageMessages.get().findLastIndex(e => e.role == 'assistant');
     if (index !== -1) {
-      messages[index] = { ...messages[index], ...message };
+      messages[index] = {...messages[index], ...message};
       set(KEYS.MESSAGES, messages);
     }
   },
+  // upd: (id, message) => {
+  //   console.log(id);
+  //   console.log(message);
+  //   const messages = storageMessages.get();
+  //   console.log(messages);
+  //   const index = storageMessages.findIndex(c => c.id === id);
+  //   if (index !== -1) {
+  //     messages[index] = {...messages[index], ...message};
+  //     set(KEYS.MESSAGES, messages);
+  //   }
+  // },
   clear: () => {
     set(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]);
   },
@@ -54,3 +65,5 @@ export const storageCurrentModel = {
     set(KEYS.CURRENT_MODEL, model)
   },
 };
+
+export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

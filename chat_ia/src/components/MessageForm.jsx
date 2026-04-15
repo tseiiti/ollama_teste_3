@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {storageCurrentModel as curMdl, storageMessages as stgMsg} from '../services/storage';
+import {storageMessages as stgMsg, storageCurrentModel as curMdl, sleep} from '../services/storage';
 
 import {
   SendHorizontal,
@@ -7,12 +7,8 @@ import {
 
 const CHAT_API_URL = 'http://localhost:11434/api/chat';
 
-const MessageForm = ({fetchMessages, setMessage, setIsThinking}) => {
+const MessageForm = (props) => {
   const [formData, setFormData] = useState({role: 'user', content: ''});
-  // const [prompt, setPrompt] = useState('');
-  // const [userId, setUserId] = useState('');
-  // const [assiId, setAssiId] = useState('');
-  // const [assiCo, setAssiCo] = useState('');
 
   const call_chat_api = async () => {
     try {
@@ -31,37 +27,39 @@ const MessageForm = ({fetchMessages, setMessage, setIsThinking}) => {
       if (!reader) return;
 
       while (true) {
-        const {done, value } = await reader.read();
+        const {done, value} = await reader.read();
         if (done) break;
         
         let rjson = new TextDecoder().decode(value);
         let json = JSON.parse(rjson);
         if (json.done) {
+          props.setMessage(prev => stgMsg.upd(prev));
+          await sleep(10);
+          props.setMessage(prev => ({...prev, content: ''}));
         } else {
           let content = json.message.content;
-          setMessage(prev => ({...prev, content: prev.content + content}));
+          props.setMessage(prev => ({...prev, content: prev.content + content}));
         }
       }
     } catch (error) {
       console.log('call_chat_api error:', error);
     } finally {
-      // let msg = MESSAGES.findLast(msg => msg.role == 'user');
-      // msg.content = PROMPT;
-      // set_assitent_messages();
-      stgMsg.add({});
-      setIsThinking(false);
+      await sleep(10);
+      props.setIsThinking(false);
+      props.fetchMessages();
     }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsThinking(true);
+    props.setIsThinking(true);
     stgMsg.add(formData);
+    stgMsg.add({role: 'assistant', content: ''});
 
     call_chat_api();
 
     setFormData({role: 'user', content: ''});
-    fetchMessages();
+    props.fetchMessages();
   };
 
   const handleEnter = (e) => {
@@ -81,7 +79,7 @@ const MessageForm = ({fetchMessages, setMessage, setIsThinking}) => {
             className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 text-sm py-3 px-2 mb-1 resize-none max-h-48 custom-scrollbar placeholder:text-outline text-on-surface font-medium"
             placeholder="Escreva a questão a ser enviada para o modelo de IA" rows="1"
             onKeyDown={handleEnter}
-            onChange={(e) => setFormData({...formData, content: e.target.value })}></textarea>
+            onChange={(e) => setFormData({...formData, content: e.target.value})}></textarea>
           <div className="flex items-center gap-1 mb-1">
             <button
               type="submit"

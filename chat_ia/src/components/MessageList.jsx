@@ -8,7 +8,7 @@ const MessageList = ({messages}) => {
         message.role == 'user' ? (
           <MessageUser key={message.id} message={message} />
         ) : (
-          <MessageAssistant key={message.id} message={message} />
+          message.content && <MessageAssistant key={message.id} message={message} />
         )
       ))}
     </div>

@@ -11,7 +11,7 @@ const MessageAssistant = ({message}) => {
         </div>
         <div className="bg-white rounded-lg rounded-tl-none p-5 space-y-4 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-outline-variant/50">
           <div className="prose prose-sm max-w-none">
-            <p className="text-on-surface">{message.content}</p>
+            <p className="text-on-surface">{message?.content}</p>
           </div>
           <div className="flex items-center gap-3 pt-2">
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
