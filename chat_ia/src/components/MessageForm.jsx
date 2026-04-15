@@ -69,8 +69,7 @@ const MessageForm = ({ onClose }) => {
   };
 
   return (
-    <div
-      className="bg-white rounded-2xl p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-outline-variant focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5 transition-all duration-500">
+    <div className="bg-white rounded-2xl p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-outline-variant focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5 transition-all duration-500">
       <form id="form_chat_api" onSubmit={handleSubmit}>
         <div className="flex items-end gap-2 px-2 py-1">
           <textarea
