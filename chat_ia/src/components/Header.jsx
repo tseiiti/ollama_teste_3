@@ -29,7 +29,6 @@ const Header = ({}) => {
   }, []);
 
   return (
-    // TopNavBar Shell
     <header className="fixed top-0 right-0 left-0 h-16 z-40 bg-white/80 dark:bg-white/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-8 w-auto">
       <div className="flex items-center gap-8 flex-1 min-w-0">
         <h2 className="text-lg font-black tracking-tighter text-on-surface shrink-0">Chat IA</h2>

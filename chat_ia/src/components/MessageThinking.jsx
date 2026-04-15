@@ -2,7 +2,7 @@ import {storageCurrentModel as curMdl} from '../services/storage';
 
 const MessageThinkingm = ({}) => {
   return (
-    <div className="flex items-start gap-4 ia_thinking_state">
+    <div className="flex items-start gap-4 ia_thinking_state mt-5">
       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 mt-1 opacity-50">
         <span className="material-symbols-outlined text-white text-xs">auto_awesome</span>
       </div>

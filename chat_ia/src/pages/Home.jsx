@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {storageMessages as stgMsg} from '../services/storage';
 
 import Header from '../components/Header';
@@ -15,7 +15,12 @@ const Home = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState({role: 'assistant', content: ''});
   const [isThinking, setIsThinking] = useState(false);
+  const scroll = useRef(null);
   
+  const handleScroll = () => {
+    scroll.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const fetchMessages = () => {
     setMessages(stgMsg.get());
   };
@@ -27,7 +32,7 @@ const Home = () => {
   return <>
     <Header />
     <main className="ml-0 mt-16 h-[calc(100vh-64px)] relative flex flex-col glow-accent">
-      <MessageList messages={messages} />
+      <MessageList messages={messages} scroll={scroll} />
       {isThinking && <MessageAssistant message={message} />}
       {isThinking && <MessageThinking />}
 
@@ -36,7 +41,8 @@ const Home = () => {
           <MessageForm 
             fetchMessages={fetchMessages}
             setMessage={setMessage}
-            setIsThinking={setIsThinking} />
+            setIsThinking={setIsThinking}
+            handleScroll={handleScroll} />
 
           <div className="mt-3 group relative flex justify-center gap-6">
             <p className="text-[10px] text-on-surface-variant/80 flex items-center gap-1.5 font-bold">

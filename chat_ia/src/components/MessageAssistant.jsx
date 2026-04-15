@@ -6,7 +6,7 @@ const MessageAssistant = ({message}) => {
   return (
     <div className="flex flex-col items-start group">
       <div className="max-w-[85%] flex items-start gap-4">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-primary/10">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-primary/10">
           <Sparkles />
         </div>
         <div className="bg-white rounded-lg rounded-tl-none p-5 space-y-4 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-outline-variant/50">

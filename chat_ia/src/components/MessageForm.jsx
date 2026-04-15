@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {storageMessages as stgMsg, storageCurrentModel as curMdl, sleep} from '../services/storage';
 
 import {
+  FileText,
   SendHorizontal,
 } from 'lucide-react';
 
@@ -39,6 +40,7 @@ const MessageForm = (props) => {
         } else {
           let content = json.message.content;
           props.setMessage(prev => ({...prev, content: prev.content + content}));
+          props.handleScroll();
         }
       }
     } catch (error) {
@@ -47,6 +49,8 @@ const MessageForm = (props) => {
       await sleep(10);
       props.setIsThinking(false);
       props.fetchMessages();
+      await sleep(10);
+      props.handleScroll();
     }
   }
 
@@ -73,6 +77,7 @@ const MessageForm = (props) => {
     <div className="bg-white rounded-2xl p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-outline-variant focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5 transition-all duration-500">
       <form id="form_chat_api" onSubmit={handleSubmit}>
         <div className="flex items-end gap-2 px-2 py-1">
+          <FileText className="ml-2 mb-4 text-outline text-on-surface" />
           <textarea
             value={formData.content}
             name="textarea_prompt"
