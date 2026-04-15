@@ -16,32 +16,41 @@ const set = (key, value) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
-export const storage = {
-  getMessages: () => get(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]),
-  getMsg: () => storage.getMessages().map((e) => { return { role: e.role, content: e.content }}),
-  addMessage: (message) => {
-    const messages = storage.getMessages();
-    const newMessage = {
+export const storageMessages = {
+  get: () => get(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]),
+  toSimple: () => storageMessages.get().map((e) => { return { role: e.role, content: e.content }}),
+  add: (msg) => {
+    const messages = storageMessages.get();
+    const message = {
       id: Math.random().toString(36).substring(2),
       created_at: (new Date()).toLocaleString(),
-      ...message,
+      ...msg,
     };
-    messages.push(newMessage);
+    messages.push(message);
     set(KEYS.MESSAGES, messages);
-    return newMessage.id;
+    return message.id;
   },
-  updMessage: (id, message) => {
-    const messages = storage.getMessages();
-    const index = messages.findIndex(c => c.id === id);
+  upd: (id, message) => {
+    const messages = storageMessages.get();
+    const index = storageMessages.findIndex(c => c.id === id);
     if (index !== -1) {
       messages[index] = { ...messages[index], ...message };
       set(KEYS.MESSAGES, messages);
     }
   },
-  clearMessages: () => {
+  clear: () => {
     set(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]);
   },
+};
 
-  getCurrentModel: () => get(KEYS.CURRENT_MODEL, 'gemma3:1b'),
-  setCurrentModel: (model) => set(KEYS.CURRENT_MODEL, model),
+export const storageCurrentModel = {
+  get: () => get(KEYS.CURRENT_MODEL, {model: 'gemma3:1b', up_tokens: 0, dw_tokens: 0}),
+  set: (mdl) => {
+    const model = {
+      ...mdl,
+      up_tokens: 0,
+      dw_tokens: 0,
+    };
+    set(KEYS.CURRENT_MODEL, model)
+  },
 };

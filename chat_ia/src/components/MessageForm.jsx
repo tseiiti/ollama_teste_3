@@ -1,29 +1,29 @@
-import { useState } from 'react';
-import { storage } from '../services/storage';
+import {useState} from 'react';
+import {storageCurrentModel as curMdl, storageMessages as stgMsg} from '../services/storage';
 
-import { 
+import {
   SendHorizontal,
 } from 'lucide-react';
 
-const CHAT_API_URL = 'http://ollama:11434/api/chat';
+const CHAT_API_URL = 'http://localhost:11434/api/chat';
 
-const MessageForm = ({ onClose }) => {
-  const [formData, setFormData] = useState({ content: '', role: 'user' });
+const MessageForm = ({fetchMessages, setMessage, setIsThinking}) => {
+  const [formData, setFormData] = useState({role: 'user', content: ''});
   // const [prompt, setPrompt] = useState('');
-  const [userId, setUserId] = useState('');
-  const [assiId, setAssiId] = useState('');
-  const [assiCo, setAssiCo] = useState('');
+  // const [userId, setUserId] = useState('');
+  // const [assiId, setAssiId] = useState('');
+  // const [assiCo, setAssiCo] = useState('');
 
   const call_chat_api = async () => {
     try {
-      const response = await fetch('http://localhost:11434/api/chat', {
+      const response = await fetch(CHAT_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: storage.getCurrentModel().model,
-          messages: storage.getMsg(),
+          model: curMdl.get().model,
+          messages: stgMsg.toSimple()
         })
       });
       
@@ -31,34 +31,37 @@ const MessageForm = ({ onClose }) => {
       if (!reader) return;
 
       while (true) {
-        const { done, value } = await reader.read();
+        const {done, value } = await reader.read();
         if (done) break;
         
         let rjson = new TextDecoder().decode(value);
         let json = JSON.parse(rjson);
-        let content = json.message.content;
-        console.log(content);
-        setAssiCo(assiCo + content);
-        storage.updMessage(assiId, assiCo);
+        if (json.done) {
+        } else {
+          let content = json.message.content;
+          setMessage(prev => ({...prev, content: prev.content + content}));
+        }
       }
     } catch (error) {
       console.log('call_chat_api error:', error);
+    } finally {
+      // let msg = MESSAGES.findLast(msg => msg.role == 'user');
+      // msg.content = PROMPT;
+      // set_assitent_messages();
+      stgMsg.add({});
+      setIsThinking(false);
     }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setUserId(storage.addMessage(formData));
-    setAssiId(storage.addMessage({
-      content: '',
-      role: 'assistant'
-    }));
+    setIsThinking(true);
+    stgMsg.add(formData);
 
-    // console.log(formData.content);
     call_chat_api();
 
-    setFormData({ content: '', role: 'user' });
-    onClose();
+    setFormData({role: 'user', content: ''});
+    fetchMessages();
   };
 
   const handleEnter = (e) => {
@@ -78,7 +81,7 @@ const MessageForm = ({ onClose }) => {
             className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 text-sm py-3 px-2 mb-1 resize-none max-h-48 custom-scrollbar placeholder:text-outline text-on-surface font-medium"
             placeholder="Escreva a questão a ser enviada para o modelo de IA" rows="1"
             onKeyDown={handleEnter}
-            onChange={(e) => setFormData({ ...formData, content: e.target.value })}></textarea>
+            onChange={(e) => setFormData({...formData, content: e.target.value })}></textarea>
           <div className="flex items-center gap-1 mb-1">
             <button
               type="submit"

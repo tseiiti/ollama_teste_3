@@ -204,7 +204,7 @@ const get_content = value => {
       TOKENS += json.prompt_eval_count;
       TOKENS += json.eval_count;
 
-      qs('.token').innerHTML = `${TOKENS} TOKENS REMAINING`;
+      qs('.token').innerHTML = `${TOKENS} TOKENS SPENT`;
     } else {
       let content = json.message.content;
       qs(`#ia_msg_${IA_MSG_ID}`).innerHTML += content;
