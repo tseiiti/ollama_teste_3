@@ -63,3 +63,15 @@ Content-Type: application/json
 {
   "query": "o que é a declaração de nova delhi?"
 }
+
+###
+
+POST http://localhost:11434/api/chat
+
+{
+  "model": "gemma3:1b",
+  "messages": [{
+    "role": "user",
+    "content": "oi"
+  }]
+}

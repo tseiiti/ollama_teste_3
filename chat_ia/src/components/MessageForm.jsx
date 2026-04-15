@@ -5,74 +5,57 @@ import {
   SendHorizontal,
 } from 'lucide-react';
 
-const CHAT_API_URL = 'http://localhost:11434/api/chat';
-
-const get_content = value => {
-  try {
-    let rjson = new TextDecoder().decode(value);
-    let json = JSON.parse(rjson);
-    // if (json.done) {
-    //   TOKENS += json.prompt_eval_count;
-    //   TOKENS += json.eval_count;
-
-    //   qs('.token').innerHTML = `${TOKENS} TOKENS REMAINING`;
-    // } else {
-      let content = json.message.content;
-      qs(`#ia_msg_${IA_MSG_ID}`).innerHTML += content;
-    // }
-  } catch (error) {
-    console.log('get_content error:', error);
-  }
-}
-
-const call_chat_api = async () => {
-  try {
-    const response = await fetch(CHAT_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: storage.getCurrentModel(),
-        messages: storage.getMessages(),
-      })
-    });
-    
-    const reader = response.body?.getReader();
-    if (!reader) return;
-
-    // qs('.flex.flex-col.items-start.group.invisible').classList.remove('invisible');
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      get_content(value);
-    }
-  } catch (error) {
-    console.log('call_chat_api error:', error);
-  // } finally {
-  //   let msg = MESSAGES.findLast(msg => msg.role == 'user');
-  //   msg.content = PROMPT;
-  //   set_assitent_messages();
-  }
-}
+const CHAT_API_URL = 'http://ollama:11434/api/chat';
 
 const MessageForm = ({ onClose }) => {
   const [formData, setFormData] = useState({ content: '', role: 'user' });
+  // const [prompt, setPrompt] = useState('');
+  const [userId, setUserId] = useState('');
+  const [assiId, setAssiId] = useState('');
+  const [assiCo, setAssiCo] = useState('');
+
+  const call_chat_api = async () => {
+    try {
+      const response = await fetch('http://localhost:11434/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: storage.getCurrentModel().model,
+          messages: storage.getMsg(),
+        })
+      });
+      
+      const reader = response.body?.getReader();
+      if (!reader) return;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        let rjson = new TextDecoder().decode(value);
+        let json = JSON.parse(rjson);
+        let content = json.message.content;
+        console.log(content);
+        setAssiCo(assiCo + content);
+        storage.updMessage(assiId, assiCo);
+      }
+    } catch (error) {
+      console.log('call_chat_api error:', error);
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    storage.addMessage(formData);
-    storage.addMessage({
+    setUserId(storage.addMessage(formData));
+    setAssiId(storage.addMessage({
       content: '',
       role: 'assistant'
-    });
-    // storage.addMessage({
-    //   role: 'thinking'
-    // });
+    }));
 
-
-    console.log(formData.content)
-
+    // console.log(formData.content);
+    call_chat_api();
 
     setFormData({ content: '', role: 'user' });
     onClose();

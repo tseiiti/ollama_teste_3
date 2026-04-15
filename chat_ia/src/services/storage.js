@@ -1,10 +1,10 @@
-const ST_KEYS = {
-  MESSAGES: 'message_list',
+const KEYS = {
+  MESSAGES: 'messages',
   CURRENT_MODEL: 'current_model',
-  DEFAULT_MESSAGES: [{
+  DEFAULT_MESSAGE: {
     role: 'system',
     content: 'Responda a pergunta com base somente no contexto. E você é um especialista no assunto deste contexto. A resposta deve ser sempre em português de forma clara e objetiva. A resposta deve ser em um único parágrafo bem elaborado e completo, a menos que esteja explícito outro formato na pergunta.'
-  }]
+  },
 };
 
 const get = (key, defaultValue) => {
@@ -17,7 +17,8 @@ const set = (key, value) => {
 };
 
 export const storage = {
-  getMessages: () => get(ST_KEYS.MESSAGES, ST_KEYS.DEFAULT_MESSAGES),
+  getMessages: () => get(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]),
+  getMsg: () => storage.getMessages().map((e) => { return { role: e.role, content: e.content }}),
   addMessage: (message) => {
     const messages = storage.getMessages();
     const newMessage = {
@@ -26,12 +27,21 @@ export const storage = {
       ...message,
     };
     messages.push(newMessage);
-    set(ST_KEYS.MESSAGES, messages);
+    set(KEYS.MESSAGES, messages);
+    return newMessage.id;
+  },
+  updMessage: (id, message) => {
+    const messages = storage.getMessages();
+    const index = messages.findIndex(c => c.id === id);
+    if (index !== -1) {
+      messages[index] = { ...messages[index], ...message };
+      set(KEYS.MESSAGES, messages);
+    }
   },
   clearMessages: () => {
-    set(ST_KEYS.MESSAGES, ST_KEYS.DEFAULT_MESSAGES);
+    set(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]);
   },
 
-  getCurrentModel: () => get(ST_KEYS.CURRENT_MODEL, 'gemma3:1b'),
-  setCurrentModel: (model) => set(ST_KEYS.CURRENT_MODEL, model),
+  getCurrentModel: () => get(KEYS.CURRENT_MODEL, 'gemma3:1b'),
+  setCurrentModel: (model) => set(KEYS.CURRENT_MODEL, model),
 };
