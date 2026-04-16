@@ -12,7 +12,7 @@ services:
 
   python:
     build:
-      dockerfile: dockerfile_python
+      dockerfile: python.dockerfile
     volumes:
       - .:/home
     ports:

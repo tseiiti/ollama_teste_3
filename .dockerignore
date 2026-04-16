@@ -1,0 +1,7 @@
+old
+testes
+__pycache__
+.venv
+.git
+*docker*
+
