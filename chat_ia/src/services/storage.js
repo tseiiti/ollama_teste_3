@@ -1,6 +1,7 @@
 const KEYS = {
-  MESSAGES: 'messages',
+  MODELS: 'models',
   CURRENT_MODEL: 'current_model',
+  MESSAGES: 'messages',
   DEFAULT_MESSAGE: {
     role: 'system',
     content: 'Responda a pergunta com base somente no contexto. E você é um especialista no assunto deste contexto. A resposta deve ser sempre em português de forma clara e objetiva. A resposta deve ser em um único parágrafo bem elaborado e completo, a menos que esteja explícito outro formato na pergunta.'
@@ -54,16 +55,18 @@ export const storageMessages = {
   },
 };
 
-export const storageCurrentModel = {
-  get: () => get(KEYS.CURRENT_MODEL, {model: 'gemma3:1b', up_tokens: 0, dw_tokens: 0}),
-  set: (mdl) => {
-    const model = {
-      ...mdl,
-      up_tokens: 0,
-      dw_tokens: 0,
-    };
-    set(KEYS.CURRENT_MODEL, model)
-  },
+export const storageModels = {
+  get: () => get(KEYS.MODELS, []),
+  set: (models) => set(KEYS.MODELS, models),
+  // get: () => get(KEYS.CURRENT_MODEL, {model: 'gemma3:1b', up_tokens: 0, dw_tokens: 0}),
+  // set: (mdl) => {
+  //   const model = {
+  //     ...mdl,
+  //     up_tokens: 0,
+  //     dw_tokens: 0,
+  //   };
+  //   set(KEYS.CURRENT_MODEL, model)
+  // },
 };
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

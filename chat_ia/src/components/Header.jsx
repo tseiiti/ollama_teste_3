@@ -1,23 +1,25 @@
-import {useState, useEffect} from 'react';
-import {storageCurrentModel as curMdl} from '../services/storage';
+import {useEffect} from 'react';
+import {storageModels as stgMdl} from '../services/storage';
 
 import {
   ShieldUser,
 } from 'lucide-react';
 
-const Header = ({}) => {
-  const [models, setModels] = useState([]);
-
+const Header = ({model, setModel, clearMessages}) => {
   const selectModel = (model) => {
-    curMdl.set(model);
-    fetchModels();
+    if (!model) {
+      // modelo padrão
+      model = stgMdl.get().find(m => m.name == 'gemma3:1b')
+    }
+    setModel(model);
+    clearMessages();
   }
   
   const fetchModels = () => {
     fetch('http://localhost:11434/api/tags')
     .then(response => {return response.json();})
     .then(json => {
-      setModels(json.models.filter(m => m.model != 'qwen3-embedding:0.6b').sort(
+      stgMdl.set(json.models.sort(
         (a, b) => a.name.localeCompare(b.name)
       ));
     })
@@ -26,6 +28,7 @@ const Header = ({}) => {
 
   useEffect(() => {
     fetchModels();
+    selectModel();
   }, []);
 
   return (
@@ -34,13 +37,13 @@ const Header = ({}) => {
         <h2 className="text-lg font-black tracking-tighter text-on-surface shrink-0">Chat IA</h2>
         <nav className="flex items-center gap-2 overflow-x-auto hide-scrollbar mask-gradient relative py-1 custom-scrollbar">
           <div className="flex items-center gap-6 whitespace-nowrap font-['Inter'] text-xs font-semibold px-2 uppercase">
-            {models.map((model) => (
-              <a key={model.digest} className={
-                  (model.model == curMdl.get().model ? 
+            {stgMdl.get().filter(m => !m.model.includes('embedding')).map((mdl) => (
+              <a key={mdl.digest} className={
+                  (mdl.model == model.model ? 
                   'text-primary border-b-2 border-primary pb-1' : 
                   'text-on-surface-variant hover:text-on-surface transition-opacity' ) + ' shrink-0'
-                } onClick={() => selectModel(model)}>
-                {model.name}
+                } onClick={() => selectModel(mdl)}>
+                {mdl.name}
               </a>
             ))}
           </div>

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {storageMessages as stgMsg, storageCurrentModel as curMdl, sleep} from '../services/storage';
+import {storageMessages as stgMsg, sleep} from '../services/storage';
 
 import {
   FileText,
@@ -19,7 +19,7 @@ const MessageForm = (props) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: curMdl.get().model,
+          model: props.model.model,
           messages: stgMsg.toSimple()
         })
       });
@@ -49,7 +49,6 @@ const MessageForm = (props) => {
       await sleep(10);
       props.setIsThinking(false);
       props.fetchMessages();
-      await sleep(10);
       props.handleScroll();
     }
   }
@@ -59,9 +58,7 @@ const MessageForm = (props) => {
     props.setIsThinking(true);
     stgMsg.add(formData);
     stgMsg.add({role: 'assistant', content: ''});
-
     call_chat_api();
-
     setFormData({role: 'user', content: ''});
     props.fetchMessages();
   };
@@ -79,6 +76,7 @@ const MessageForm = (props) => {
         <div className="flex items-end gap-2 px-2 py-1">
           <FileText className="ml-2 mb-4 text-outline text-on-surface" />
           <textarea
+            ref={props.textRef}
             value={formData.content}
             name="textarea_prompt"
             className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 text-sm py-3 px-2 mb-1 resize-none max-h-48 custom-scrollbar placeholder:text-outline text-on-surface font-medium"

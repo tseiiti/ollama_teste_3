@@ -1,7 +1,7 @@
 import MessageUser from './MessageUser';
 import MessageAssistant from './MessageAssistant';
 
-const MessageList = ({messages, scroll}) => {
+const MessageList = ({messages, scrollRef}) => {
   return (
     <div className="flex-1 overflow-y-auto custom-scrollbar px-8 lg:px-24 py-12 space-y-10">
       {messages.filter(e => e.role != 'system').map((message) => (
@@ -11,7 +11,7 @@ const MessageList = ({messages, scroll}) => {
           message.content && <MessageAssistant key={message.id} message={message} />
         )
       ))}
-      <div className="my-5 py-5" ref={scroll}></div>
+      <div className="my-5 py-5" ref={scrollRef}></div>
     </div>
   )
 };

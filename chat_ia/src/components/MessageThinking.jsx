@@ -1,6 +1,4 @@
-import {storageCurrentModel as curMdl} from '../services/storage';
-
-const MessageThinkingm = ({}) => {
+const MessageThinkingm = ({model}) => {
   return (
     <div className="flex items-start gap-4 ia_thinking_state mt-5">
       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 mt-1 opacity-50">
@@ -13,7 +11,7 @@ const MessageThinkingm = ({}) => {
           <div className="w-1.5 h-1.5 bg-primary rounded-full opacity-30"></div>
         </div>
         <span className="text-xs font-bold">
-          <label className="uppercase">{curMdl.get().name}</label> is thinking...
+          <label className="uppercase">{model.name}</label> is thinking...
         </span>
       </div>
     </div>
