@@ -1,65 +1,22 @@
 import {useState} from 'react';
-import {storageMessages as stgMsg, sleep} from '../services/storage';
+import {storageMessages as stgMsg, call_chat_api} from '../services/storage';
 
 import {
   FileText,
   SendHorizontal,
 } from 'lucide-react';
 
-const CHAT_API_URL = 'http://localhost:11434/api/chat';
-
 const MessageForm = (props) => {
   const [formData, setFormData] = useState({role: 'user', content: ''});
-
-  const call_chat_api = async () => {
-    try {
-      const response = await fetch(CHAT_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: props.model.model,
-          messages: stgMsg.toSimple()
-        })
-      });
-      
-      const reader = response.body?.getReader();
-      if (!reader) return;
-
-      while (true) {
-        const {done, value} = await reader.read();
-        if (done) break;
-        
-        let rjson = new TextDecoder().decode(value);
-        let json = JSON.parse(rjson);
-        if (json.done) {
-          props.setMessage(prev => stgMsg.upd(prev));
-          await sleep(10);
-          props.setMessage(prev => ({...prev, content: ''}));
-        } else {
-          let content = json.message.content;
-          props.setMessage(prev => ({...prev, content: prev.content + content}));
-          props.handleScroll();
-        }
-      }
-    } catch (error) {
-      console.log('call_chat_api error:', error);
-    } finally {
-      await sleep(10);
-      props.setIsThinking(false);
-      props.fetchMessages();
-      props.handleScroll();
-    }
-  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.content.trim().length == 0) return;
     props.setIsThinking(true);
     stgMsg.add(formData);
-    stgMsg.add({role: 'assistant', content: ''});
-    call_chat_api();
+
+    call_chat_api(props);
+
     setFormData({role: 'user', content: ''});
     props.fetchMessages();
   };

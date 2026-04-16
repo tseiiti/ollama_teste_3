@@ -4,7 +4,7 @@ import {
 
 const MessageAssistant = ({message}) => {
   return (
-    <div className="flex flex-col items-start group">
+    <div className="flex flex-col items-start group" id={message?.id}>
       <div className="max-w-[85%] flex items-start gap-4">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-primary/10">
           <Sparkles />
@@ -13,19 +13,22 @@ const MessageAssistant = ({message}) => {
           <div className="prose prose-sm max-w-none">
             <p className="text-on-surface">{message?.content}</p>
           </div>
-          {/* <div className="flex items-center gap-3 pt-2">
+          <div className="flex items-center gap-3 pt-2">
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
               <span className="material-symbols-outlined text-sm">thumb_up</span>
             </button>
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
               <span className="material-symbols-outlined text-sm">thumb_down</span>
             </button>
-            <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
+            {/* <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
               <span className="material-symbols-outlined text-sm">refresh</span>
-            </button>
-          </div> */}
+            </button> */}
+          </div>
         </div>
       </div>
+      <span className="ml-12 text-[10px] text-on-surface-variant mt-2 block opacity-0 group-hover:opacity-100 transition-opacity font-bold">
+        { (new Date()).toLocaleString() }
+      </span>
     </div>
   )
 };

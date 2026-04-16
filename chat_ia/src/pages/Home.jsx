@@ -9,9 +9,9 @@ import MessageThinking from '../components/MessageThinking';
 import InfoArea from '../components/InfoArea';
 
 const Home = () => {
-  const [model, setModel] = useState({});
+  const [currentModel, setCurrentModel] = useState({});
   const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState({role: 'assistant', content: ''});
+  const [assitantMessage, setAssistantMessage] = useState({role: 'assistant', content: ''});
   const [isThinking, setIsThinking] = useState(false);
   const scrollRef = useRef(null);
   const textRef = useRef(null);
@@ -28,7 +28,7 @@ const Home = () => {
   };
 
   const fetchMessages = () => {
-    setMessages(stgMsg.get());
+    setMessages(stgMsg.list());
     handleScroll();
   };
 
@@ -37,18 +37,26 @@ const Home = () => {
   }, []);
 
   return <>
-    <Header model={model} setModel={setModel} clearMessages={clearMessages} />
-    <main className="ml-0 mt-16 h-[calc(100vh-64px)] relative flex flex-col glow-accent">
-      <MessageList messages={messages} scrollRef={scrollRef} />
-      {isThinking && <MessageAssistant message={message} />}
-      {isThinking && <MessageThinking model={model} />}
+    {/* TopNavBar Shell */}
+    <Header model={currentModel} setModel={setCurrentModel} clearMessages={clearMessages} />
 
-      <InfoArea clearMessages={clearMessages} model={model}>
+    {/* Main Content Canvas */}
+    <main className="ml-0 mt-16 h-[calc(100vh-64px)] relative flex flex-col glow-accent">
+
+      {/* Message Stream Area */}
+      <MessageList messages={messages} scrollRef={scrollRef} />
+      {isThinking && <MessageAssistant message={assitantMessage} />}
+      {isThinking && <MessageThinking model={currentModel} />}
+
+      {/* Input and Information Area */}
+      <InfoArea clearMessages={clearMessages} model={currentModel}>
+
+        {/* Input Shell Area */}
         <MessageForm 
           textRef={textRef}
-          model={model}
+          model={currentModel}
           fetchMessages={fetchMessages}
-          setMessage={setMessage}
+          setMessage={setAssistantMessage}
           setIsThinking={setIsThinking}
           handleScroll={handleScroll} />
       </InfoArea>
