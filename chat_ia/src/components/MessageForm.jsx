@@ -55,6 +55,7 @@ const MessageForm = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (formData.content.trim().length == 0) return;
     props.setIsThinking(true);
     stgMsg.add(formData);
     stgMsg.add({role: 'assistant', content: ''});

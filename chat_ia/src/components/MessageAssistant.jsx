@@ -13,7 +13,7 @@ const MessageAssistant = ({message}) => {
           <div className="prose prose-sm max-w-none">
             <p className="text-on-surface">{message?.content}</p>
           </div>
-          <div className="flex items-center gap-3 pt-2">
+          {/* <div className="flex items-center gap-3 pt-2">
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
               <span className="material-symbols-outlined text-sm">thumb_up</span>
             </button>
@@ -23,7 +23,7 @@ const MessageAssistant = ({message}) => {
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
               <span className="material-symbols-outlined text-sm">refresh</span>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
