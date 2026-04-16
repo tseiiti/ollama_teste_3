@@ -17,19 +17,19 @@ const Home = () => {
   const textRef = useRef(null);
   
   const handleScroll = async () => {
-    await sleep(10);
+    await sleep(1);
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     textRef.current?.focus();
-  };
-
-  const clearMessages = () => {
-    stgMsg.clear();
-    fetchMessages();
   };
 
   const fetchMessages = () => {
     setMessages(stgMsg.list());
     handleScroll();
+  };
+
+  const clearMessages = () => {
+    stgMsg.clear();
+    fetchMessages();
   };
 
   useEffect(() => {

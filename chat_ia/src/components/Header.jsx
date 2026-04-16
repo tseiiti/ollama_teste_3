@@ -6,28 +6,15 @@ import {
 } from 'lucide-react';
 
 const Header = ({model, setModel, clearMessages}) => {
-  const selectModel = (model) => {
+  const selectModel = async (model) => {
     if (!model) {
-      // modelo padrão
-      model = stgMdl.get().find(m => m.name == 'gemma3:1b')
+      model = stgMdl.cur();
     }
     setModel(model);
-    clearMessages();
+    stgMdl.setCur(model);
   }
-  
-  const fetchModels = () => {
-    fetch('http://localhost:11434/api/tags')
-    .then(response => {return response.json();})
-    .then(json => {
-      stgMdl.set(json.models.sort(
-        (a, b) => a.name.localeCompare(b.name)
-      ));
-    })
-    .catch(error => {console.error(error);});
-  };
 
   useEffect(() => {
-    fetchModels();
     selectModel();
   }, []);
 
@@ -37,22 +24,20 @@ const Header = ({model, setModel, clearMessages}) => {
         <h2 className="text-lg font-black tracking-tighter text-on-surface shrink-0">Chat IA</h2>
         <nav className="flex items-center gap-2 overflow-x-auto hide-scrollbar mask-gradient relative py-1 custom-scrollbar">
           <div className="flex items-center gap-6 whitespace-nowrap font-['Inter'] text-xs font-semibold px-2 uppercase">
-            {stgMdl.get().filter(m => !m.model.includes('embedding')).map((mdl) => (
-              <a key={mdl.digest} className={
-                  (mdl.model == model.model ? 
+            {stgMdl.get().filter(m => !m.model.includes('embedding')).map((m) => (
+              <a key={m.digest} className={
+                  (m.model == model?.model ? 
                   'text-primary border-b-2 border-primary pb-1' : 
                   'text-on-surface-variant hover:text-on-surface transition-opacity' ) + ' shrink-0'
-                } onClick={() => selectModel(mdl)}>
-                {mdl.name}
+                } onClick={() => {selectModel(m); clearMessages();}}>
+                {m.name}
               </a>
             ))}
           </div>
         </nav>
       </div>
       <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-violet-600 shadow-sm border border-slate-100 shrink-0 ml-4">
-        <div className="h-8 w-8 rounded-full">
-          <ShieldUser size={32} />
-        </div>
+        <ShieldUser size={36} />
       </div>
     </header>
   );
