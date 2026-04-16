@@ -265,7 +265,7 @@ const send_query = async () => {
 }
 
 const CHAT_API_URL = 'http://localhost:11434/api/chat';
-const CONTEXT_URL  = ''; //'http://localhost:8000/context';
+const CONTEXT_URL  = 'http://localhost:8000/context';
 const MODELS_URL   = 'http://localhost:11434/api/tags';
 var MODELS = [];
 var MESSAGES = [{

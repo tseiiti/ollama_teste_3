@@ -2,7 +2,7 @@ import {storageMessages as stgMsg} from '../services/storage';
 
 const MessageAssistant = ({message, fetchMessages}) => {
   const like = (message, value) => {
-    if (value == message.like) value = 0;
+    if (value == message?.like) value = 0;
     stgMsg.upd(message.id, {...message, like: value});
     fetchMessages();
   }
@@ -29,11 +29,11 @@ const MessageAssistant = ({message, fetchMessages}) => {
           <div className="flex items-center gap-3">
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
               onClick={() => like(message, 1)} title="Gostei! &#128522;">
-              <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: (message.like == 1 ? "'FILL' 1" : '')}}>thumb_up</span>
+              <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: (message?.like == 1 ? "'FILL' 1" : '')}}>thumb_up</span>
             </button>
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
               onClick={() => like(message, -1)} title="Não gostei...  &#128542;">
-              <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: (message.like == -1 ? "'FILL' 1" : '')}}>thumb_down</span>
+              <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: (message?.like == -1 ? "'FILL' 1" : '')}}>thumb_down</span>
             </button>
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
               onClick={() => copy(message?.content)} title="Copiar o texto">

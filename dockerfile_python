@@ -12,4 +12,4 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 RUN echo "alias ll='ls -AFoqv --color --group-directories-first'" >> ~/.bashrc
-# CMD [ "python", "./your-daemon-or-script.py" ]
+CMD [ "python", "./server.py" ]
