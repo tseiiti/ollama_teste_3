@@ -62,7 +62,8 @@ def load_txt(path):
 
 
 embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=OLLAMA_BASE_URL)
-is_add = not os.path.isfile(os.path.join(CHROMA_DB_PATH, "chroma.sqlite3"))
+# is_add = not os.path.isfile(os.path.join(CHROMA_DB_PATH, "chroma.sqlite3"))
+is_add = not any(os.path.isdir(os.path.join(CHROMA_DB_PATH, fn)) for fn in os.listdir(CHROMA_DB_PATH))
 
 vector_store = Chroma(
   collection_name="documents",
@@ -80,6 +81,7 @@ if is_add:
     path = os.path.join(STORAGE_PATH, fn)
     loader = loaders.get(os.path.splitext(path)[1])
     loader(path)
+    print("adicionado o arquivo:", fn)
 
 retriever = vector_store.as_retriever(
   search_kwargs={"k": TOP_K}

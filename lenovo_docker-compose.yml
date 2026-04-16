@@ -1,17 +1,18 @@
 services:
   ollama:
-    # image: ollama/ollama:rocm
-    image: ollama/ollama
+    image: ollama/ollama:rocm
     volumes:
       - ollama:/root/.ollama
     ports:
       - 11434:11434
     networks:
       - internal_network
+    devices:
+      - /dev/dxg
 
   python:
     build:
-      dockerfile: python.dockerfile
+      dockerfile: dockerfile_python
     volumes:
       - .:/home
     ports:
