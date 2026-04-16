@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 const Header = ({model, setModel, clearMessages}) => {
-  const selectModel = async (model) => {
+  const selectModel = (model) => {
     if (!model) {
       model = stgMdl.cur();
     }

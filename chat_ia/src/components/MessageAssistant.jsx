@@ -1,4 +1,21 @@
-const MessageAssistant = ({message}) => {
+import {storageMessages as stgMsg} from '../services/storage';
+
+const MessageAssistant = ({message, fetchMessages}) => {
+  const like = (message, value) => {
+    if (value == message.like) value = 0;
+    stgMsg.upd(message.id, {...message, like: value});
+    fetchMessages();
+  }
+  
+  const copy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('Texto copiado!');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="flex flex-col items-start group" id={message?.id}>
       <div className="max-w-[85%] flex items-start gap-4">
@@ -10,15 +27,18 @@ const MessageAssistant = ({message}) => {
             <p className="text-on-surface">{message?.content}</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
-              <span className="material-symbols-outlined text-sm">thumb_up</span>
+            <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
+              onClick={() => like(message, 1)} title="Gostei! &#128522;">
+              <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: (message.like == 1 ? "'FILL' 1" : '')}}>thumb_up</span>
             </button>
-            <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
-              <span className="material-symbols-outlined text-sm">thumb_down</span>
+            <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
+              onClick={() => like(message, -1)} title="Não gostei...  &#128542;">
+              <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: (message.like == -1 ? "'FILL' 1" : '')}}>thumb_down</span>
             </button>
-            {/* <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-on-surface-variant hover:text-primary">
-              <span className="material-symbols-outlined text-sm">refresh</span>
-            </button> */}
+            <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
+              onClick={() => copy(message?.content)} title="Copiar o texto">
+              <span className="material-symbols-outlined text-sm">content_copy</span>
+            </button>
             <p className="text-[10px] text-on-surface-variant/80 mb-2">{message?.created_at}</p>
           </div>
         </div>

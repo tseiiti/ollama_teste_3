@@ -44,7 +44,7 @@ const Home = () => {
     <main className="ml-0 mt-16 h-[calc(100vh-64px)] relative flex flex-col glow-accent">
 
       {/* Message Stream Area */}
-      <MessageList messages={messages} scrollRef={scrollRef} />
+      <MessageList messages={messages} scrollRef={scrollRef} fetchMessages={fetchMessages} />
       {isThinking && <MessageAssistant message={assitantMessage} />}
       {isThinking && <MessageThinking model={currentModel} />}
 

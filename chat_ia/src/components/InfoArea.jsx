@@ -1,13 +1,9 @@
 import {storageModels as stgMdl} from '../services/storage';
-
 import InfoDetail from './InfoDetail';
-import {
-  Trash2,
-} from 'lucide-react';
 
 const InfoArea = ({clearMessages, model, children}) => {
   return (
-    <div className="px-2 lg:px-24 pb-8 pt-4 bg-gradient-to-t from-background via-background to-transparent">
+    <div className="px-2 sm:px-12 lg:px-24 pb-8 pt-4 bg-gradient-to-t from-background via-background to-transparent">
       <div className="max-w-4xl mx-auto">
         {children}
         <div className="mt-3 group relative flex justify-center gap-4">
