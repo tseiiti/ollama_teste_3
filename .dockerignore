@@ -1,7 +1,7 @@
-old
-testes
-__pycache__
-.venv
-.git
+**/old
+**/testes
+**/__pycache__
+**/.venv
+**/.git
 *docker*
 

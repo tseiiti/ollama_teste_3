@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {storageMessages as stgMsg, call_chat_api} from '../services/storage';
+import {storageMessages as stgMsg, send_query} from '../services/storage';
 
 const MessageForm = (props) => {
   const [formData, setFormData] = useState({role: 'user', content: ''});
@@ -7,13 +7,13 @@ const MessageForm = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.content.trim().length == 0) return;
-    props.setIsThinking(true);
-    stgMsg.add(formData);
+    // props.setIsThinking(true);
+    // stgMsg.add(formData);
 
-    call_chat_api(props);
+    send_query(props, formData);
 
     setFormData({role: 'user', content: ''});
-    props.fetchMessages();
+    // props.fetchMessages();
   };
 
   const handleEnter = (e) => {

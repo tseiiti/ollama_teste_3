@@ -6,13 +6,16 @@ const KEYS = {
     role: 'system',
     content: 'Responda a pergunta com base somente no contexto. E você é um especialista no assunto deste contexto. A resposta deve ser sempre em português de forma clara e objetiva, e sem formatação. A resposta deve ser em um único parágrafo bem elaborado e completo, a menos que esteja explícito outro formato na pergunta.'
   },
+  // LAST_USER_MESSAGE: 'last_user_message',
+  // LAST_ASSIST_MESSAGE: 'last_assist_message',
   TOKENS: 'tokens',
 };
 
-const OLLAMA_BASE = 'http://localhost:11434';
+const OLLAMA_BASE  = 'http://localhost:11434';
 const CHAT_API_URL = OLLAMA_BASE + '/api/chat';
 const API_TAGS_URL = OLLAMA_BASE + '/api/tags';
-const API_PS_URL = OLLAMA_BASE + '/api/ps';
+const API_PS_URL   = OLLAMA_BASE + '/api/ps';
+const CONTEXT_URL  = 'http://localhost:8000/context';
 
 const get = (key, defaultValue) => {
   const data = localStorage.getItem(key);
@@ -71,11 +74,11 @@ export const storageModels = {
 };
 
 export const storageMessages = {
-  get: () => get(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]),
+  gets: () => get(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]),
   list: () => get(KEYS.MESSAGES, [KEYS.DEFAULT_MESSAGE]).filter(e => e.role != 'system'),
-  send: () => storageMessages.get().map((e) => {return {role: e.role, content: e.content}}),
+  send: () => storageMessages.gets().map((e) => {return {role: e.role, content: e.content}}),
   add: (msg) => {
-    const messages = storageMessages.get();
+    const messages = storageMessages.gets();
     const message = {
       id: Math.random().toString(36).substring(2),
       created_at: (new Date()).toLocaleString(),
@@ -85,9 +88,10 @@ export const storageMessages = {
     set(KEYS.MESSAGES, messages);
     return message.id;
   },
+  get: (id) => storageMessages.gets().find(m => m.id === id),
   upd: (id, message) => {
-    const messages = storageMessages.get();
-    const index = storageMessages.get().findIndex(c => c.id === id);
+    const messages = storageMessages.gets();
+    const index = storageMessages.gets().findIndex(c => c.id === id);
     if (index !== -1) {
       messages[index] = {...messages[index], ...message};
       set(KEYS.MESSAGES, messages);
@@ -99,9 +103,43 @@ export const storageMessages = {
   },
 };
 
-export const call_chat_api = async (props) => {
+export const send_query = async (props, formData) => {
+  props.setIsThinking(true);
+  let query;
+  let user_msg_id;
+  let assist_msg_id;
+  let prompt = formData.content;
+
+  // pegar o contexto da questão
+  await fetch(CONTEXT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: prompt
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(context => {
+    query = `
+      Pergunta: ${prompt}
+      
+      Contexto: ${context}
+    `;
+  })
+  .catch(error => console.error('send_query error:', error));
+
+  console.log(query)
+
   try {
-    const id = storageMessages.add({role: 'assistant', content: ''});
+    user_msg_id = storageMessages.add(query);
+    assist_msg_id = storageMessages.add({role: 'assistant', content: ''});
 
     const response = await fetch(CHAT_API_URL, {
       method: 'POST',
@@ -125,7 +163,7 @@ export const call_chat_api = async (props) => {
       let json = JSON.parse(rjson);
       if (json.done) {
         storageModels.incTokens(json.prompt_eval_count, json.eval_count)
-        props.setMessage(prev => storageMessages.upd(id, {
+        props.setMessage(prev => storageMessages.upd(assist_msg_id, {
           ...prev,
           up_tokens: json.prompt_eval_count,
           dw_tokens: json.eval_count,
@@ -144,6 +182,7 @@ export const call_chat_api = async (props) => {
     console.error('call_chat_api error:', error);
   } finally {
     await sleep(2);
+    storageMessages.upd(user_msg_id,formData);
     props.setIsThinking(false);
     props.fetchMessages();
     props.handleScroll();
