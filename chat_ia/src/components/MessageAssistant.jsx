@@ -28,15 +28,15 @@ const MessageAssistant = ({message, fetchMessages}) => {
           </div>
           <div className="flex items-center gap-3">
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
-              onClick={() => like(message, 1)} title="Gostei! &#128522;">
+              onClick={() => like(message, 1)} title='Marcar essa reposta como "Gostei! &#128522;"'>
               <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: (message?.like == 1 ? "'FILL' 1" : '')}}>thumb_up</span>
             </button>
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
-              onClick={() => like(message, -1)} title="Não gostei...  &#128542;">
+              onClick={() => like(message, -1)} title='Marcar essa reposta como "Não gostei...  &#128542;"'>
               <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: (message?.like == -1 ? "'FILL' 1" : '')}}>thumb_down</span>
             </button>
             <button className="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline hover:text-primary"
-              onClick={() => copy(message?.content)} title="Copiar o texto">
+              onClick={() => copy(message?.content)} title="Copiar o texto da resposta para Área de Transferência">
               <span className="material-symbols-outlined text-sm">content_copy</span>
             </button>
             <p className="text-[10px] text-on-surface-variant/80 mb-2">{message?.created_at}</p>

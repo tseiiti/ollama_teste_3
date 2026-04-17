@@ -83,4 +83,211 @@ bolt
 gemma2:latest
 
 history_edu
-6434 TOKENS REMAINING
+6434 TOKENS 
+
+
+react-dom_client.js?v=110d392b:14337 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+storage.js:138 
+      Pergunta: oi
+      
+      Contexto: Sistema M ES na indústria 4.0
+                         Página:0012  
+❖ 
+Demais Funcionalidades:  
+ 
+[
+Fechamento da Parada ] 
+Automaticamente  → A IHM ao receber o sinal de produção, fecha a parada.  
+Manualmente  → A IHM ao receber o sinal de produção, não fecha a parada.  
+ 
+ 
+[
+Parada Prevista ? ] 
+Parada Prevista  → Desconsidera no cálculo de OEE. (Não penaliza a máquina)  
+Parada Não Prevista  → Entra para o cálculo de OEE. (Penaliza a máquina)  
+ 
+ 
+[
+Duração Máxima (hh:mm) ] 
+Tempo máximo parada prevista  → Ao terminar o tempo, fecha a parada.  
+ 
+ 
+❖ 
+Aspectos importantes a destacar:  
+Parada Prevista – Terminada a duração do tempo informado na parada prevista, ela se fecha e entra 
+automaticamente a parada 
+ Motivo Indeterminado .  
+ 
+Alterando o tempo tolerância para retroagir a parada Motivo Indeterminado.  
+Caso seja necessário alterar o tempo para retroagir a parada, selecione o código 1100 [
+ Mot. 
+Indeterminado ], e altere o tempo de duração conforme desejar. (
+ Defaut: hh=00mm=00 ) 
+ 
+Exemplo:  
+ 
+ 
+Parada Motivo Indeterminado - No exemplo acima, ao iniciar -se a parada Motivo Indeterminado, o 
+operador terá até 60 minutos para justificar o real motivo da parada da máquina. Depois de terminado 
+o tempo máximo, o motivo de parada que o operador apontar será registrado somente do ponto em 
+diante, para traz ficará registrado como parada 
+ Motivo Indeterminado . 
+Note que:  
+Ao se justificar o Motivo Indeterminado por uma 
+ parada prevista , neste caso o tempo 
+ não será 
+retroagido, somente retroage para paradas não previstas.,Sistema M ES na indústria 4.0
+                         Página:0032  
+ 
+❖ 
+Especificações e detalhamento dos campos:  
+[
+Operação ], selecionar o código da operação desejado. (
+ Default =OP. Normal ). 
+ 
+[
+Ferramenta ], selecionar o código do molde desejado. (
+ Default=STD ). 
+ 
+[
+ID], será informado o código d o produto . 
+(Campo Numérico de 26 posições).  
+ 
+[
+Nome ], será informado o nome  do produto , não utilizar acentuação e apenas caracteres maiúsculos.  
+(Campo Alfanumérico de 40 posições).  
+ 
+[
+Habilitado ], ao desabilitar  a caixa de seleção, o produto  não será aceito  na IHM.  
+(Campo Alfanumérico de 01 posição) . 
+ 
+[
+Unidade ], será informada neste campo a unidade de medida para o produto, (
+ Default=Pcs ). 
+(Campo Alfanumérico de 03 posições).  
+ 
+[
+Produto/Ciclo ], serão informados produtos por operação. (
+ Default=1 ). 
+(Campo numérico de 05 posições).  
+ 
+[
+Ciclos/Produto ], serão informados ciclos por produto. (
+ Default=1 ). 
+(Campo numérico de 03 posições).  
+ 
+[
+Produto/Hora ], será informada a produção por hora. (
+ Default=3.600,00 ). 
+(Campo numérico de 10 posições).  
+ 
+[
+% Efic ], será informado o índice de rejeição. (
+ Default=90 ).  Atingido o índice de 90% de produtos 
+rejeitados, dispara o alarme de aviso para o usuário.  
+(Campo numérico de 03 posições).  
+ 
+[
+Tempo Setup (min) ], será informado o tempo de setup. (
+ Default=10 ).  Atingido o tempo de 10 
+minutos, dispara o alarme de aviso para o usuário.  
+(Campo numérico de 03 posições).  
+ 
+[
+% Alarme de Rejeição na OP ], será informado o índice de rejeição. (
+ Default=90 ).  Atingido o índice de 
+90% de produtos rejeitados, dispara o alarme de aviso para o usuário.  
+(Campo numérico de 03 posições).  
+ 
+[
+Home ns/Hora ], campo utilizado para cálculo a quantidade de operadores do cadastro de operadores. 
+(
+Default=001 ). 
+(Campo numérico de 03 posições).  
+ 
+[
+Peso (gr.) ], será informado o peso do produto. (
+ Default=0000000001  
+→
+Indica 1 gr .). 
+(Campo numérico de 10 posições).  
+ 
+[,Sistema MES na indústria 4.0
+                         Página:006  
+ 
+Detalhamento de itens exibidos no grupo 
+ →
+Turno  
+• 
+Turno  
+→ Exibe o número do turno atual . 
+• 
+Ciclos  
+→ Exibe a Qtde de  ciclos realizados na hora atual.  
+• 
+Produ zido  
+→ Exibe a Qtde  de produtos fabricados na hora atual.  
+• 
+Rejei tado  
+→Exibe a Qtde de produtos rejeitados na hora atual . 
+• 
+Rejeitado (%)  
+→Exibe o índice de rejeição da hora atual . 
+ 
+ 
+ 
+Detalhamento de itens exibidos no grupo 
+ →
+Planejamento  
+• 
+O.P. 
+→ Exibe o número d a ordem de produção . 
+• 
+Iniciado em  
+→ Exibe a data e a hora do início da produção . 
+• 
+Ciclos planejados  
+→ Exibe a Qtde  de ciclos planejados . 
+• 
+Ciclos /Produtos  
+→Exibe a Qtde de ciclos produ zidos, como também o percentual em relação ao ciclo planejado . 
+• 
+Produtos fabricados  
+→Exibe a Qtde. de produtos fabricados . 
+• 
+Rejei tado  
+→Exibe a Qtde de rejeições, como também o percentual em relação ao ciclo planejado . 
+• 
+Lote 
+→ Exibe  o número  do lote.  
+• 
+Produtos 
+ →Exibe o(s) item(s) de produto da ordem de produção  (Operação/ ID do produto/Nome do produto).  
+ 
+ 
+ 
+Detalhamento de itens exibidos no grupo 
+ →
+Dados do ciclo da máquina  
+• 
+Produtos/Hora (Padrão)  
+→ Exibe o ciclo padrão definido no cadastro de produtos.  
+• 
+Real  
+→ Exibe o ciclo real na hora atual, como também a indicação para mais (+) ou para menos  (-) em relação a 
+produtos/Hora (Padrão) . 
+• 
+Itens esperados por hora  
+→ Exibe a Qtde  de itens esperados na hora atual.  
+• 
+Real  
+→Exibe a Qtde real de itens produzidos na hora atual, como também a indicação para mais (+)  ou para menos  
+(-) em relação aos itens esperados por hora.  
+• 
+Ciclo padrão Seg(s)  
+→ Exibe o ciclo padrão em Seg(s) . 
+• 
+Ciclo médio  
+→ Exibe o ciclo médio produtivo na hora atual , como também a indicação para mais (+) ou para 
+menos( -) em relação ao ciclo padrão em Seg(s).
+    
