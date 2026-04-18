@@ -49,7 +49,7 @@ const Home = () => {
       {isThinking && <MessageThinking model={currentModel} />}
 
       {/* Input and Information Area */}
-      <InfoArea clearMessages={clearMessages} model={currentModel}>
+      <InfoArea model={currentModel}>
 
         {/* Input Shell Area */}
         <MessageForm 
@@ -61,6 +61,13 @@ const Home = () => {
           handleScroll={handleScroll} />
       </InfoArea>
     </main>
+
+    <div className="fixed top-20 left-5"> 
+      <p className="text-[10px] text-on-surface-variant/80 flex items-center gap-1 font-bold" title="Limpar a conversa" onClick={clearMessages}>
+        <span className="material-symbols-outlined text-[14px] text-primary">contract_delete</span>
+        <span className="token">NOVO CHAT</span>
+      </p>
+    </div>
   </>
 };
 

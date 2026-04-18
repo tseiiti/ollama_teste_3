@@ -30,7 +30,17 @@ a {
   --border-radius: { 'DEFAULT': '0.5rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' };
 }
 
+docker run -d --device /dev/dxg -v ollama_teste_3_ollama:/root/.ollama ollama/ollama:rocm
+
+docker run -itd -v .:/home --name teste ollama_teste_3-python
+docker exec -it teste bash 
+
+
+
+
 gemma3:1b
+
+==========================================================================================
 
 olá
 
@@ -86,8 +96,8 @@ history_edu
 6434 TOKENS 
 
 
-react-dom_client.js?v=110d392b:14337 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-storage.js:138 
+=========================================================================================
+
       Pergunta: oi
       
       Contexto: Sistema M ES na indústria 4.0
