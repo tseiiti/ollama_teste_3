@@ -1,3 +1,18 @@
+# https://www.youtube.com/watch?v=gudCcAFMdLE
+# https://colab.research.google.com/github/nomic-ai/cookbook/blob/main/guides/pdf-rag-nomic-embed-multimodal.ipynb#scrollTo=OrSJ3nMXwvr7
+# https://github.com/nomic-ai/colpali
+# https://pypi.org/project/colpali-engine/
+# https://huggingface.co/docs/transformers/model_doc/colpali
+# https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct
+# https://huggingface.co/nomic-ai/nomic-embed-multimodal-3b
+# https://huggingface.co/athrael-soju/colqwen3.5-4.5B-v3
+
+
+
+
+
+
+
 
 # apt update
 # apt upgrade -y
